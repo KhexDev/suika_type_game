@@ -1,10 +1,4 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
-use bevy_rapier2d::{
-    prelude::*,
-    geometry::Collider,
-};
-
-use crate::mouse_pos::MousePos;
 
 pub struct PlayerPlugin;
 
@@ -37,12 +31,10 @@ fn spawn_player(
 
 fn move_player(
     mut q: Query<&mut Transform, With<Player>>,
-    mouse_pos: Res<MousePos>,
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
 ) {
     if let Ok(mut transform) = q.get_single_mut() {
-        // transform.translation.x = mouse_pos.0.x;
         if keys.pressed(KeyCode::Right) {
             transform.translation.x += SPEED * time.delta_seconds();
         } else if keys.pressed(KeyCode::Left) {
