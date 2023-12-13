@@ -27,6 +27,8 @@ impl Plugin for FruitsPlugin {
             change_next_fruit,
             on_create_fruit,
             remove_fruits_out_of_reach,
+            check_fruits_flying,
+            check_loose_condition,
         ));
     }
 }
@@ -36,6 +38,9 @@ struct Fruit;
 
 #[derive(Component)]
 struct FruitPlaced;
+
+#[derive(Component)]
+struct FruitFlying;
 
 #[derive(Component, PartialEq, Clone, Copy, Debug, Reflect, Default)]
 #[reflect(Component)]
@@ -124,6 +129,10 @@ fn on_create_fruit(
         .insert(ColliderMassProperties::Mass(5.0 + (ev.0 as usize + 1) as f32 * 100.0))
         .insert(GravityScale(10.0))
         .insert(Friction::coefficient(0.75))
+        .insert(Velocity {
+            angvel: 0.0,
+            linvel: Vec2::new(0.0, 0.0),
+        })
         .insert(Fruit)
         .insert(ev.0)
         .insert(Name::new(format!("{:?}", ev.0)));
@@ -261,6 +270,43 @@ fn remove_fruits_out_of_reach(
             commands.entity(entity).despawn();
             println!("out of reach removing fruit");
         }
+    }
+}
+
+// CAN CRASH SOMETIMES
+fn check_fruits_flying(
+    grounded_fruit_q: Query<(Entity, &Velocity), (With<Fruit>, With<FruitPlaced>, Without<FruitFlying>)>,
+    flying_fruit_q: Query<(Entity, &Velocity), (With<Fruit>, With<FruitPlaced>, With<FruitFlying>)>,
+    mut commands: Commands,
+) {
+    let cond_vel = 500.0;
+
+    for (entity, vel) in grounded_fruit_q.iter() {
+        if vel.linvel.y.abs() >= cond_vel {
+            commands.entity(entity).insert(FruitFlying);
+        }
+    }
+    for (entity, vel) in flying_fruit_q.iter() {
+        if vel.linvel.y.abs() <= cond_vel {
+            commands.entity(entity).remove::<FruitFlying>();
+        }
+    }
+}
+
+fn check_loose_condition(
+    placed_fruits_q: Query<&Transform, (With<Fruit>, With<FruitPlaced>, Without<FruitFlying>)>,
+    fruits_q: Query<Entity, With<Fruit>>,
+    mut next_fruit: ResMut<NextFruit>,
+    mut commands: Commands,
+) {
+    for transform in placed_fruits_q.iter() {
+        if transform.translation.y >= 285.0 {
+            println!("GAME OVER BIG NOOBS");
+            for entity in fruits_q.iter() {
+                commands.entity(entity).despawn();
+                next_fruit.0 = FruitType::Cherry;
+            }
+        }   
     }
 }
 
