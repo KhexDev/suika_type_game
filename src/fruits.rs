@@ -273,22 +273,26 @@ fn remove_fruits_out_of_reach(
     }
 }
 
-// CAN CRASH SOMETIMES
+// MAY HAVE FIXED IT IDK
 fn check_fruits_flying(
     grounded_fruit_q: Query<(Entity, &Velocity), (With<Fruit>, With<FruitPlaced>, Without<FruitFlying>)>,
     flying_fruit_q: Query<(Entity, &Velocity), (With<Fruit>, With<FruitPlaced>, With<FruitFlying>)>,
     mut commands: Commands,
 ) {
-    let cond_vel = 500.0;
+    let cond_vel = 100.0;
 
     for (entity, vel) in grounded_fruit_q.iter() {
         if vel.linvel.y.abs() >= cond_vel {
-            commands.entity(entity).insert(FruitFlying);
+            if let Some(mut entity) = commands.get_entity(entity) {
+                entity.insert(FruitFlying);
+            }
         }
     }
     for (entity, vel) in flying_fruit_q.iter() {
         if vel.linvel.y.abs() <= cond_vel {
-            commands.entity(entity).remove::<FruitFlying>();
+            if let Some(mut entity) = commands.get_entity(entity) {
+                entity.remove::<FruitFlying>();
+            }
         }
     }
 }
@@ -300,7 +304,8 @@ fn check_loose_condition(
     mut commands: Commands,
 ) {
     for transform in placed_fruits_q.iter() {
-        if transform.translation.y >= 285.0 {
+        let offset = 75.0;
+        if transform.translation.y >= 285.0 && transform.translation.y <= 285.0 + offset {
             println!("GAME OVER BIG NOOBS");
             for entity in fruits_q.iter() {
                 commands.entity(entity).despawn();
