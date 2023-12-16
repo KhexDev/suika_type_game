@@ -19,7 +19,7 @@ impl Plugin for FruitsPlugin {
         app.init_resource::<NextFruit>();
         app.register_type::<NextFruit>();
         app.add_systems(Update, (
-            spawn_current_fruit,
+            drop_fruit,
             check_fruits_placed,
             check_fruits_fusing,
             spawn_new_fruit_once_fused,
@@ -139,16 +139,26 @@ fn on_create_fruit(
     }
 }
 
-fn spawn_current_fruit(
+fn drop_fruit(
     keys: Res<Input<KeyCode>>,
     next_fruit: Res<NextFruit>,
     assets: Res<AssetServer>,
+    time: Res<Time>,
     mut change_fruit_ev: EventWriter<ChangedFruitEvent>,
     mut create_fruit_ev: EventWriter<CreateFruitEvent>,
     mut played_first: Local<bool>,
     mut commands: Commands,
+    mut cooldown: Local<Timer>,
+    mut setup: Local<bool>,
 ) {
-    if keys.just_pressed(KeyCode::Space) {
+    if !*setup {
+        *cooldown = Timer::from_seconds(1.25, TimerMode::Once);
+        *setup = true;
+    }
+
+    cooldown.tick(time.delta());
+
+    if keys.just_pressed(KeyCode::Space) && cooldown.finished() {
         let fruit_type: FruitType;
     
         if !*played_first {
@@ -170,6 +180,8 @@ fn spawn_current_fruit(
         });
 
         create_fruit_ev.send(CreateFruitEvent(fruit_type, None));
+
+        cooldown.reset();
     }
 }
 
@@ -199,7 +211,7 @@ fn check_fruits_placed(
         for container_entity in container_q.iter() {
             if let Some(contact_pair) = rapier_context.contact_pair(fruit_entity, container_entity) {
                 if contact_pair.has_any_active_contacts() {
-                    println!("colliding with fruit and container");
+                    // println!("colliding with fruit and container");
                     commands.entity(fruit_entity).insert(FruitPlaced);
                 }
             }
@@ -207,7 +219,7 @@ fn check_fruits_placed(
         for placed_fruit_entity in placed_fruits_q.iter() {
             if let Some(contact_pair) = rapier_context.contact_pair(fruit_entity, placed_fruit_entity) {
                 if contact_pair.has_any_active_contacts() {
-                    println!("colliding with fruit and placed fruits");
+                    // println!("colliding with fruit and placed fruits");
                     commands.entity(fruit_entity).insert(FruitPlaced);
                 }
             }
@@ -268,7 +280,7 @@ fn remove_fruits_out_of_reach(
     for (entity, transform) in q.iter() {
         if transform.translation.y <= -800.0 {
             commands.entity(entity).despawn();
-            println!("out of reach removing fruit");
+            // println!("out of reach removing fruit");
         }
     }
 }
