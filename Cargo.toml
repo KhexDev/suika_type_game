@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 bevy = {version="0.12.1", features = ["dynamic_linking", "mp3", "jpeg"]}
 bevy-inspector-egui = "0.21.0"
-bevy_rapier2d = {version="0.23.0", features = ["debug-render-2d", "simd-stable", "parallel"]}
+bevy_rapier2d = {version="0.23.0", features = ["debug-render-2d", "simd-stable"]}
 once_cell = "1.19.0"
 rand = "0.8.5"
 

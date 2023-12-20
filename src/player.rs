@@ -1,11 +1,13 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
+use crate::mouse_pos::MousePos;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_player);
-        app.add_systems(Update, move_player);
+        app.add_systems(FixedUpdate, move_player);
     }
 }
 
@@ -31,14 +33,15 @@ fn spawn_player(
 
 fn move_player(
     mut q: Query<&mut Transform, With<Player>>,
-    keys: Res<Input<KeyCode>>,
-    time: Res<Time>,
+    // keys: Res<Input<KeyCode>>,
+    // time: Res<Time>,
+    mouse_pos: Res<MousePos>,
 ) {
+    let lerp = |a, b, t| -> f32 {
+        a + (b - a) * t
+    };
+
     if let Ok(mut transform) = q.get_single_mut() {
-        if keys.pressed(KeyCode::Right) {
-            transform.translation.x += SPEED * time.delta_seconds();
-        } else if keys.pressed(KeyCode::Left) {
-            transform.translation.x -= SPEED * time.delta_seconds();
-        }
+        transform.translation.x = lerp(mouse_pos.0.x, transform.translation.x, 0.85);
     }
 }

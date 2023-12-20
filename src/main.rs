@@ -1,7 +1,6 @@
 use bevy::{prelude::*, audio::PlaybackMode};
 use bevy_rapier2d::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
-
 use crate::{player::PlayerPlugin, container::ContainerPlugin, fruits::FruitsPlugin, mouse_pos::MousePosPlugin, next_fruits_ui::NextFruitUIPlugin};
 
 mod player;
@@ -10,15 +9,28 @@ mod fruits;
 mod mouse_pos;
 mod next_fruits_ui;
 mod utils;
+mod controls_window;
+
+use controls_window::*;
 
 fn main() {
     println!("Hello, world!");
     App::new()
+
     .add_plugins((
-        DefaultPlugins,
+        DefaultPlugins.set(
+            WindowPlugin {
+                primary_window: Some(Window {
+                    resizable: false,
+                    ..default()
+                }),
+                ..default()
+            }
+        ),
         WorldInspectorPlugin::new(),
         RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
         // RapierDebugRenderPlugin::default(),
+        ControlWindowPlugin,
         PlayerPlugin,
         ContainerPlugin,
         FruitsPlugin,

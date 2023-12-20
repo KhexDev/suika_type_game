@@ -27,7 +27,7 @@ impl Plugin for FruitsPlugin {
             change_next_fruit,
             on_create_fruit,
             remove_fruits_out_of_reach,
-            check_fruits_flying,
+            // check_fruits_flying,
             check_loose_condition,
         ));
     }
@@ -126,7 +126,7 @@ fn on_create_fruit(
         .insert(RigidBody::Dynamic)
         .insert(TransformBundle::from(Transform::from(player_transform)))
         .insert(Collider::ball(ball_size))
-        .insert(ColliderMassProperties::Mass(5.0 + (ev.0 as usize + 1) as f32 * 100.0))
+        .insert(ColliderMassProperties::Mass(15.0 + (ev.0 as usize + 1) as f32 * 100.0))
         .insert(GravityScale(10.0))
         .insert(Friction::coefficient(0.75))
         .insert(Velocity {
@@ -141,6 +141,7 @@ fn on_create_fruit(
 
 fn drop_fruit(
     keys: Res<Input<KeyCode>>,
+    btn: Res<Input<MouseButton>>,
     next_fruit: Res<NextFruit>,
     assets: Res<AssetServer>,
     time: Res<Time>,
@@ -158,7 +159,7 @@ fn drop_fruit(
 
     cooldown.tick(time.delta());
 
-    if keys.just_pressed(KeyCode::Space) && cooldown.finished() {
+    if (keys.just_pressed(KeyCode::Space) || btn.just_pressed(MouseButton::Right)) && cooldown.finished() {
         let fruit_type: FruitType;
     
         if !*played_first {

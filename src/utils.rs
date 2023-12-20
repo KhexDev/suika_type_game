@@ -47,7 +47,7 @@ pub fn get_fruits(fruit: FruitType) -> (f32, Color) {
             fruit_color = Color::SEA_GREEN
         }
         FruitType::Watermelon => {
-            ball_size = 1.1;
+            ball_size = 1.2;
             fruit_color = Color::DARK_GREEN;
         }
     }
