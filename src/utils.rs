@@ -54,3 +54,23 @@ pub fn get_fruits(fruit: FruitType) -> (f32, Color) {
 
     (ball_size, fruit_color)
 }
+
+pub fn get_score_from_fruits(fruit_type: FruitType) -> i32 {
+    let score: i32;
+
+    match fruit_type {
+        FruitType::Cherry => score = 50,
+        FruitType::Strawberry => score = 75,
+        FruitType::Grapes => score = 100,
+        FruitType::Dekopon => score = 150,
+        FruitType::Persimon => score = 175,
+        FruitType::Apple => score = 200,
+        FruitType::Pear => score = 250,
+        FruitType::Peach => score = 300,
+        FruitType::Pineapple => score = 350,
+        FruitType::Melon => score = 400,
+        FruitType::Watermelon => score = 450,
+    }
+
+    score
+}

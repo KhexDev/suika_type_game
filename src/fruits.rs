@@ -28,7 +28,7 @@ impl Plugin for FruitsPlugin {
             on_create_fruit,
             remove_fruits_out_of_reach,
             // check_fruits_flying,
-            check_loose_condition,
+            // check_loose_condition,
         ));
     }
 }
@@ -94,7 +94,7 @@ impl Default for NextFruit {
 struct LoadNextFruit;
 
 #[derive(Event)]
-struct FruitFusedEvent(pub FruitType, pub Vec2);
+pub struct FruitFusedEvent(pub FruitType, pub Vec2);
 
 #[derive(Event)]
 struct ChangedFruitEvent;
