@@ -11,7 +11,7 @@ impl Plugin for ControlWindowPlugin {
 
 fn draw_window(mut contexts: EguiContexts) {
     egui::Window::new("Controles")
-    .default_pos(Pos2::new(0.0, 500.0))
+    .default_pos(Pos2::new(0.0, 720.0))
     .show(contexts.ctx_mut(), |ui| {
         ui.separator();
         ui.label("Click droite: pour poser un fruit");

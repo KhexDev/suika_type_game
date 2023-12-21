@@ -1,4 +1,4 @@
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle, audio::PlaybackMode};
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle, audio::{PlaybackMode, Volume, VolumeLevel}};
 use bevy_rapier2d::{
     prelude::*,
     geometry::Collider,
@@ -6,7 +6,7 @@ use bevy_rapier2d::{
 use rand::prelude::*;
 use once_cell::sync::Lazy;
 
-use crate::{player::Player, container::Container, utils::get_fruits};
+use crate::{player::Player, container::Container, utils::get_fruits, volume::GameVolume};
 
 pub struct FruitsPlugin;
 
@@ -145,6 +145,7 @@ fn drop_fruit(
     next_fruit: Res<NextFruit>,
     assets: Res<AssetServer>,
     time: Res<Time>,
+    game_volume: Res<GameVolume>,
     mut change_fruit_ev: EventWriter<ChangedFruitEvent>,
     mut create_fruit_ev: EventWriter<CreateFruitEvent>,
     mut played_first: Local<bool>,
@@ -175,6 +176,7 @@ fn drop_fruit(
             source: assets.load("drop.mp3"),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Despawn,
+                volume: Volume::Absolute(VolumeLevel::new(game_volume.sfx_volume)),
                 ..default()
             },
             ..default()

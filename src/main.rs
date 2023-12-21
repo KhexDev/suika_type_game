@@ -1,7 +1,7 @@
-use bevy::{prelude::*, audio::PlaybackMode};
+use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiPlugin;
 use bevy_rapier2d::prelude::*;
-use crate::{player::PlayerPlugin, container::ContainerPlugin, fruits::FruitsPlugin, mouse_pos::MousePosPlugin, next_fruits_ui::NextFruitUIPlugin, score::ScorePlugin, watermark::WatermarkPlugin};
+use crate::{player::PlayerPlugin, container::ContainerPlugin, fruits::FruitsPlugin, mouse_pos::MousePosPlugin, next_fruits_ui::NextFruitUIPlugin, score::ScorePlugin, watermark::WatermarkPlugin, volume::VolumePlugin, background_music::BackgroundMusicPlugin};
 
 mod player;
 mod container;
@@ -12,6 +12,8 @@ mod utils;
 mod controls_window;
 mod score;
 mod watermark;
+mod volume;
+mod background_music;
 
 use controls_window::*;
 
@@ -42,10 +44,11 @@ fn main() {
         NextFruitUIPlugin,
         ScorePlugin,
         WatermarkPlugin,
+        VolumePlugin,
+        BackgroundMusicPlugin,
     ))
     .add_systems(Startup, (
         setup_cam,
-        play_bg_music,
         exit_game,
     ))
     .run();
@@ -53,20 +56,6 @@ fn main() {
 
 fn setup_cam(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-}
-
-fn play_bg_music(
-    mut commands: Commands,
-    assets: Res<AssetServer>,
-) {
-    commands.spawn(AudioBundle {
-        source: assets.load("bg.mp3"),
-        settings: PlaybackSettings {
-            mode: PlaybackMode::Loop,
-            ..default()
-        },
-        ..default()
-    });
 }
 
 fn exit_game(keys: Res<Input<KeyCode>>) {
