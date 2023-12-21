@@ -11,8 +11,6 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-const SPEED: f32 = 200.0;
-
 #[derive(Component)]
 pub struct Player;
 
@@ -33,15 +31,15 @@ fn spawn_player(
 
 fn move_player(
     mut q: Query<&mut Transform, With<Player>>,
-    // keys: Res<Input<KeyCode>>,
-    // time: Res<Time>,
     mouse_pos: Res<MousePos>,
 ) {
     let lerp = |a, b, t| -> f32 {
         a + (b - a) * t
     };
 
+    let range = 210.0;
+
     if let Ok(mut transform) = q.get_single_mut() {
-        transform.translation.x = lerp(mouse_pos.0.x, transform.translation.x, 0.85);
+        transform.translation.x = lerp(f32::clamp(mouse_pos.0.x, -range, range), transform.translation.x, 0.75);
     }
 }

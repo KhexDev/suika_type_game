@@ -46,6 +46,7 @@ fn main() {
     .add_systems(Startup, (
         setup_cam,
         play_bg_music,
+        exit_game,
     ))
     .run();
 }
@@ -66,4 +67,10 @@ fn play_bg_music(
         },
         ..default()
     });
+}
+
+fn exit_game(keys: Res<Input<KeyCode>>) {
+    if keys.just_pressed(KeyCode::Escape) {
+        std::process::exit(0);
+    }
 }
