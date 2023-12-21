@@ -1,7 +1,6 @@
 use bevy::{prelude::*, audio::PlaybackMode};
 use bevy_inspector_egui::bevy_egui::EguiPlugin;
 use bevy_rapier2d::prelude::*;
-use bevy_inspector_egui::bevy_egui;
 use crate::{player::PlayerPlugin, container::ContainerPlugin, fruits::FruitsPlugin, mouse_pos::MousePosPlugin, next_fruits_ui::NextFruitUIPlugin, score::ScorePlugin, watermark::WatermarkPlugin};
 
 mod player;
